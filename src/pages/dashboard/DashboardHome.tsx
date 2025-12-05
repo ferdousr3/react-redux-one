@@ -67,7 +67,7 @@ export function DashboardHome() {
    return (
       <div className="space-y-8">
          {/* Welcome Header with 3D effect */}
-         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 p-8 text-white shadow-xl">
+         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 p-8 text-white">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
             <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
             <div className="relative z-10">
@@ -92,7 +92,7 @@ export function DashboardHome() {
                   to={stat.href}
                   className="group"
                >
-                  <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                  <Card className="relative overflow-hidden border-0 transition-all duration-300 hover:-translate-y-1">
                      {/* Gradient top bar */}
                      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${stat.color}`} />
 
@@ -120,7 +120,7 @@ export function DashboardHome() {
 
          {/* Quick Actions with 3D effect */}
          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="border-0 shadow-lg overflow-hidden">
+            <Card className="border-0 overflow-hidden">
                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500" />
                <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export function DashboardHome() {
                </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-lg overflow-hidden">
+            <Card className="border-0 overflow-hidden">
                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
                <CardHeader>
                   <CardTitle className="flex items-center gap-2">
