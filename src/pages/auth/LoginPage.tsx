@@ -47,7 +47,7 @@ export function LoginPage() {
     const result = await dispatch(login(data));
     if (login.fulfilled.match(result)) {
       toast.success('Welcome back!');
-      navigate(from, { replace: true });
+      // Navigation is handled by useEffect when isAuthenticated changes
     }
   }
 
