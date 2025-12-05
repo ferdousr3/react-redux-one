@@ -29,9 +29,6 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-2 lg:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 bg-emerald-700 rounded-md flex items-center justify-center text-white">
-                <Scale className="w-3.5 h-3.5" />
-              </div>
               <span className="text-slate-900 font-semibold tracking-tight">VERITAS.</span>
             </Link>
             <p className="text-slate-500 text-sm leading-relaxed max-w-sm">

@@ -1,18 +1,23 @@
 export interface Post {
-   id: number
-   userId: number
+   id: string
    title: string
-   body: string
+   content: string | null
+   published: boolean
+   authorId: string | null
+   creatorId?: string | null
+   createdAt: string
+   updatedAt: string
 }
 
 export interface PostInput {
-   userId: number
    title: string
-   body: string
+   content?: string
+   published?: boolean
 }
 
 export interface PostQuery {
-   userId?: number
+   search?: string
    page?: number
    limit?: number
+   published?: boolean
 }

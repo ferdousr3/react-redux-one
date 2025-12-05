@@ -1,28 +1,28 @@
 export interface LawyerDto {
    name: string
-   instituteName: string
-   practiceStartYear: number
-   lawyerType: string
-   phoneNumber: string
-   email: string
-   profileImageUrl: string
-   coverImageUrl: string
-   description: string
-   rating: number
-   address: string
-   city: string
-   district: string
-   postCode: string
-   website: string
-   businessHours: string
-   sponsored: boolean
-   sponsoredUntil: Date | null
-   interestedArea: string
-   institutionId: string
-   latitude: number
-   longitude: number
-   status: LawyerStatus
-   verified: boolean
+   instituteName?: string
+   practiceStartYear?: number
+   lawyerType?: string
+   phoneNumber?: string
+   email?: string
+   profileImageUrl?: string
+   coverImageUrl?: string
+   description?: string
+   rating?: number
+   address?: string
+   city?: string
+   district?: string
+   postCode?: string
+   website?: string
+   businessHours?: string
+   sponsored?: boolean
+   sponsoredUntil?: Date | null
+   interestedArea?: string
+   institutionId?: string
+   latitude?: number
+   longitude?: number
+   status?: LawyerStatus
+   verified?: boolean
 }
 
 export enum LawyerStatus {
@@ -31,16 +31,40 @@ export enum LawyerStatus {
    HIDDEN = 'hidden',
 }
 
-export interface Lawyer extends LawyerDto {
+export interface Lawyer {
    id: string
-   createdAt: Date
-   updatedAt: Date
+   name: string
+   instituteName?: string | null
+   practiceStartYear?: number | null
+   lawyerType?: string | null
+   phoneNumber?: string | null
+   email?: string | null
+   profileImageUrl?: string | null
+   coverImageUrl?: string | null
+   description?: string | null
+   rating?: number | null
+   address?: string | null
+   city?: string | null
+   district?: string | null
+   postCode?: string | null
+   website?: string | null
+   businessHours?: string | null
+   sponsored?: boolean
+   sponsoredUntil?: Date | null
+   interestedArea?: string | null
+   institutionId?: string | null
+   latitude?: number | null
+   longitude?: number | null
+   status?: LawyerStatus
+   verified?: boolean
+   createdAt: string
+   updatedAt: string
 }
 
 export interface LawyerQuery {
    search?: string
-   page: number
-   size: number
+   page?: number
+   size?: number
    orderBy?: string
    orderDirection?: 'asc' | 'desc'
    type?: string | string[]

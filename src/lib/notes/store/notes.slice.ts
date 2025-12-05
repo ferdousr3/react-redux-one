@@ -1,21 +1,27 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import { notesApi } from '../api/notes.api'
 import { Note, NotesInput, NoteQuery } from '../models/notes.model'
-import { toast } from '@/lib/utils/toast.service'
 
 interface NotesState {
    notes: Note[]
    selectedNote: Note | null
    loading: boolean
+   creating: boolean
+   updating: boolean
+   deleting: string | null
    error: string | null
    query: NoteQuery
    total: number
+   initialized: boolean
 }
 
 const initialState: NotesState = {
    notes: [],
    selectedNote: null,
    loading: false,
+   creating: false,
+   updating: false,
+   deleting: null,
    error: null,
    query: {
       search: '',
@@ -24,18 +30,18 @@ const initialState: NotesState = {
       orderBy: 'desc',
    },
    total: 0,
+   initialized: false,
 }
 
 // Async thunks
 export const fetchNotes = createAsyncThunk(
    'notes/fetchAll',
-   async (query: Partial<NoteQuery>, { rejectWithValue }) => {
+   async (query: Partial<NoteQuery> = {}, { rejectWithValue }) => {
       try {
          const response = await notesApi.getAllNotes({ ...initialState.query, ...query })
          return response
       } catch (error: any) {
-         toast.error('Failed to load notes', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to load notes')
       }
    }
 )
@@ -47,8 +53,7 @@ export const fetchNote = createAsyncThunk(
          const response = await notesApi.getNote(id)
          return response
       } catch (error: any) {
-         toast.error('Failed to load note', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to load note')
       }
    }
 )
@@ -58,11 +63,9 @@ export const createNote = createAsyncThunk(
    async (data: NotesInput, { rejectWithValue }) => {
       try {
          const response = await notesApi.createNote(data)
-         toast.success('Note created successfully')
          return response
       } catch (error: any) {
-         toast.error('Failed to create note', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to create note')
       }
    }
 )
@@ -72,11 +75,9 @@ export const updateNote = createAsyncThunk(
    async ({ id, data }: { id: string; data: Partial<Note> }, { rejectWithValue }) => {
       try {
          const response = await notesApi.updateNote(id, data)
-         toast.success('Note updated successfully')
          return response
       } catch (error: any) {
-         toast.error('Failed to update note', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to update note')
       }
    }
 )
@@ -86,11 +87,9 @@ export const deleteNote = createAsyncThunk(
    async (id: string, { rejectWithValue }) => {
       try {
          await notesApi.deleteNote(id)
-         toast.success('Note deleted successfully')
          return id
       } catch (error: any) {
-         toast.error('Failed to delete note', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to delete note')
       }
    }
 )
@@ -109,6 +108,10 @@ const notesSlice = createSlice({
       clearError: (state) => {
          state.error = null
       },
+      clearNotes: (state) => {
+         state.notes = []
+         state.initialized = false
+      },
    },
    extraReducers: (builder) => {
       builder
@@ -121,6 +124,7 @@ const notesSlice = createSlice({
             state.loading = false
             state.notes = action.payload.data
             state.total = action.payload.pagination?.total || 0
+            state.initialized = true
          })
          .addCase(fetchNotes.rejected, (state, action) => {
             state.loading = false
@@ -138,24 +142,27 @@ const notesSlice = createSlice({
             state.loading = false
             state.error = action.payload as string
          })
-         // Create note
+         // Create note - add to local state
          .addCase(createNote.pending, (state) => {
-            state.loading = true
+            state.creating = true
+            state.error = null
          })
          .addCase(createNote.fulfilled, (state, action) => {
-            state.loading = false
+            state.creating = false
             state.notes = [action.payload.data, ...state.notes]
+            state.total += 1
          })
          .addCase(createNote.rejected, (state, action) => {
-            state.loading = false
+            state.creating = false
             state.error = action.payload as string
          })
-         // Update note
+         // Update note - update in local state
          .addCase(updateNote.pending, (state) => {
-            state.loading = true
+            state.updating = true
+            state.error = null
          })
          .addCase(updateNote.fulfilled, (state, action) => {
-            state.loading = false
+            state.updating = false
             const index = state.notes.findIndex((n) => n.id === action.payload.data.id)
             if (index !== -1) {
                state.notes[index] = action.payload.data
@@ -165,23 +172,25 @@ const notesSlice = createSlice({
             }
          })
          .addCase(updateNote.rejected, (state, action) => {
-            state.loading = false
+            state.updating = false
             state.error = action.payload as string
          })
-         // Delete note
-         .addCase(deleteNote.pending, (state) => {
-            state.loading = true
+         // Delete note - remove from local state
+         .addCase(deleteNote.pending, (state, action) => {
+            state.deleting = action.meta.arg
+            state.error = null
          })
          .addCase(deleteNote.fulfilled, (state, action) => {
-            state.loading = false
+            state.deleting = null
             state.notes = state.notes.filter((n) => n.id !== action.payload)
+            state.total -= 1
          })
          .addCase(deleteNote.rejected, (state, action) => {
-            state.loading = false
+            state.deleting = null
             state.error = action.payload as string
          })
    },
 })
 
-export const { setQuery, setSelectedNote, clearError } = notesSlice.actions
+export const { setQuery, setSelectedNote, clearError, clearNotes } = notesSlice.actions
 export default notesSlice.reducer

@@ -1,37 +1,39 @@
-import axios from 'axios'
+import { httpClient } from '@/lib/api/http-client'
 import { Post, PostInput, PostQuery } from '../models/post.model'
 
-const BASE_URL = 'https://jsonplaceholder.typicode.com'
-
 export class PostApiService {
+   private baseUrl = '/v1/posts'
+
    async getAllPosts(query?: PostQuery) {
       const params = new URLSearchParams()
-      if (query?.userId) params.append('userId', query.userId.toString())
-      if (query?.page) params.append('_page', query.page.toString())
-      if (query?.limit) params.append('_limit', query.limit.toString())
+      if (query?.search) params.append('search', query.search)
+      if (query?.page) params.append('page', query.page.toString())
+      if (query?.limit) params.append('size', query.limit.toString())
+      if (query?.published !== undefined) params.append('published', query.published.toString())
 
-      const response = await axios.get<Post[]>(`${BASE_URL}/posts?${params.toString()}`)
-      return response.data
+      const response = await httpClient.get<Post[]>(`${this.baseUrl}?${params.toString()}`)
+      return response.data.data
    }
 
-   async getPost(id: number) {
-      const response = await axios.get<Post>(`${BASE_URL}/posts/${id}`)
-      return response.data
+   async getPost(id: string) {
+      const response = await httpClient.get<Post>(`${this.baseUrl}/${id}`)
+      return response.data.data
    }
 
    async createPost(data: PostInput) {
-      const response = await axios.post<Post>(`${BASE_URL}/posts`, data)
-      return response.data
+      const response = await httpClient.post<Post>(this.baseUrl, data)
+      return response.data.data
    }
 
-   async updatePost(id: number, data: Partial<Post>) {
-      const response = await axios.put<Post>(`${BASE_URL}/posts/${id}`, data)
-      return response.data
+   async updatePost(id: string, data: Partial<Post>) {
+      // Backend uses PATCH method
+      const response = await httpClient.patch<Post>(`${this.baseUrl}/${id}`, data)
+      return response.data.data
    }
 
-   async deletePost(id: number) {
-      await axios.delete(`${BASE_URL}/posts/${id}`)
-      return id
+   async deletePost(id: string) {
+      const response = await httpClient.delete<void>(`${this.baseUrl}/${id}`)
+      return response.data
    }
 }
 

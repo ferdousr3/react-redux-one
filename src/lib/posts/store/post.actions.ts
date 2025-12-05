@@ -1,9 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { postApi } from '../api/post.api'
 import { Post, PostInput, PostQuery } from '../models/post.model'
-import { toast } from '@/lib/utils/toast.service'
 
-// Fetch all posts
+// Fetch all posts - only called on initial load or page refresh
 export const fetchPosts = createAsyncThunk(
    'posts/fetchAll',
    async (query: PostQuery = {}, { rejectWithValue }) => {
@@ -11,8 +10,7 @@ export const fetchPosts = createAsyncThunk(
          const data = await postApi.getAllPosts(query)
          return data
       } catch (error: any) {
-         toast.error('Failed to load posts', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to load posts')
       }
    }
 )
@@ -20,58 +18,51 @@ export const fetchPosts = createAsyncThunk(
 // Fetch single post
 export const fetchPost = createAsyncThunk(
    'posts/fetchOne',
-   async (id: number, { rejectWithValue }) => {
+   async (id: string, { rejectWithValue }) => {
       try {
          const data = await postApi.getPost(id)
          return data
       } catch (error: any) {
-         toast.error('Failed to load post', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to load post')
       }
    }
 )
 
-// Create post
+// Create post - returns created post to add to state
 export const createPost = createAsyncThunk(
    'posts/create',
    async (data: PostInput, { rejectWithValue }) => {
       try {
          const result = await postApi.createPost(data)
-         toast.success('Post created successfully')
          return result
       } catch (error: any) {
-         toast.error('Failed to create post', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to create post')
       }
    }
 )
 
-// Update post
+// Update post - returns updated post to update in state
 export const updatePost = createAsyncThunk(
    'posts/update',
-   async ({ id, data }: { id: number; data: Partial<Post> }, { rejectWithValue }) => {
+   async ({ id, data }: { id: string; data: Partial<Post> }, { rejectWithValue }) => {
       try {
          const result = await postApi.updatePost(id, data)
-         toast.success('Post updated successfully')
          return result
       } catch (error: any) {
-         toast.error('Failed to update post', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to update post')
       }
    }
 )
 
-// Delete post
+// Delete post - returns id to remove from state
 export const deletePost = createAsyncThunk(
    'posts/delete',
-   async (id: number, { rejectWithValue }) => {
+   async (id: string, { rejectWithValue }) => {
       try {
          await postApi.deletePost(id)
-         toast.success('Post deleted successfully')
-         return id
+         return id // Return the id to remove from local state
       } catch (error: any) {
-         toast.error('Failed to delete post', error.message)
-         return rejectWithValue(error.message)
+         return rejectWithValue(error.response?.data?.message || 'Failed to delete post')
       }
    }
 )

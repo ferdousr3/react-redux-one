@@ -14,9 +14,13 @@ interface ProductState {
    selectedProduct: Product | null
    categories: string[]
    loading: boolean
+   creating: boolean
+   updating: boolean
+   deleting: string | null
    error: string | null
    query: ProductQuery
    total: number
+   initialized: boolean
 }
 
 const initialState: ProductState = {
@@ -24,12 +28,16 @@ const initialState: ProductState = {
    selectedProduct: null,
    categories: [],
    loading: false,
+   creating: false,
+   updating: false,
+   deleting: null,
    error: null,
    query: {
-      limit: 12,
-      skip: 0,
+      page: 1,
+      size: 12,
    },
    total: 0,
+   initialized: false,
 }
 
 const productSlice = createSlice({
@@ -47,6 +55,7 @@ const productSlice = createSlice({
       },
       clearProducts: (state) => {
          state.products = []
+         state.initialized = false
       },
    },
    extraReducers: (builder) => {
@@ -60,6 +69,7 @@ const productSlice = createSlice({
             state.loading = false
             state.products = action.payload.products
             state.total = action.payload.total
+            state.initialized = true
          })
          .addCase(fetchProducts.rejected, (state, action) => {
             state.loading = false
@@ -77,24 +87,27 @@ const productSlice = createSlice({
             state.loading = false
             state.error = action.payload as string
          })
-         // Create product
+         // Create product - add to local state
          .addCase(createProduct.pending, (state) => {
-            state.loading = true
+            state.creating = true
+            state.error = null
          })
          .addCase(createProduct.fulfilled, (state, action) => {
-            state.loading = false
+            state.creating = false
             state.products = [action.payload, ...state.products]
+            state.total += 1
          })
          .addCase(createProduct.rejected, (state, action) => {
-            state.loading = false
+            state.creating = false
             state.error = action.payload as string
          })
-         // Update product
+         // Update product - update in local state
          .addCase(updateProduct.pending, (state) => {
-            state.loading = true
+            state.updating = true
+            state.error = null
          })
          .addCase(updateProduct.fulfilled, (state, action) => {
-            state.loading = false
+            state.updating = false
             const index = state.products.findIndex((p) => p.id === action.payload.id)
             if (index !== -1) {
                state.products[index] = action.payload
@@ -104,19 +117,21 @@ const productSlice = createSlice({
             }
          })
          .addCase(updateProduct.rejected, (state, action) => {
-            state.loading = false
+            state.updating = false
             state.error = action.payload as string
          })
-         // Delete product
-         .addCase(deleteProduct.pending, (state) => {
-            state.loading = true
+         // Delete product - remove from local state
+         .addCase(deleteProduct.pending, (state, action) => {
+            state.deleting = action.meta.arg
+            state.error = null
          })
          .addCase(deleteProduct.fulfilled, (state, action) => {
-            state.loading = false
+            state.deleting = null
             state.products = state.products.filter((p) => p.id !== action.payload)
+            state.total -= 1
          })
          .addCase(deleteProduct.rejected, (state, action) => {
-            state.loading = false
+            state.deleting = null
             state.error = action.payload as string
          })
          // Fetch categories
@@ -135,4 +150,5 @@ const productSlice = createSlice({
 })
 
 export const { setQuery, setSelectedProduct, clearError, clearProducts } = productSlice.actions
+export { fetchProducts, fetchProduct, createProduct, updateProduct, deleteProduct, fetchCategories }
 export default productSlice.reducer

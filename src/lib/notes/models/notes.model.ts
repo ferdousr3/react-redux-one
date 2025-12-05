@@ -6,8 +6,8 @@ export interface Creator {
 
 export interface NotesInput {
    title: string
-   content: string
-   caseId: string
+   content?: string
+   caseId?: string
 }
 
 export interface Note extends NotesInput {

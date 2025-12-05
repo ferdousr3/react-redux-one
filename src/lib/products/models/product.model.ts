@@ -1,35 +1,30 @@
 export interface Product {
-   id: number
-   title: string
-   description: string
-   price: number
-   discountPercentage: number
-   rating: number
+   id: string
+   name: string
+   description: string | null
+   price: string
    stock: number
-   brand: string
-   category: string
-   thumbnail: string
-   images: string[]
+   image: string | null
+   creatorId: string | null
+   createdAt: string
+   updatedAt: string
 }
 
 export interface ProductInput {
-   title: string
-   description: string
-   price: number
-   brand: string
-   category: string
+   name: string
+   description?: string
+   price: string
+   stock?: number
+   image?: string
 }
 
 export interface ProductQuery {
-   limit?: number
-   skip?: number
    search?: string
-   category?: string
+   page?: number
+   size?: number
 }
 
 export interface ProductsResponse {
    products: Product[]
    total: number
-   skip: number
-   limit: number
 }
