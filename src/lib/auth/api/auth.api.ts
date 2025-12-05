@@ -56,8 +56,8 @@ class AuthApiService {
       return response.data.data
    }
 
-   async register(data: RegisterData): Promise<{ message: string }> {
-      const response = await httpClient.post<{ message: string }>(`${this.baseUrl}/register`, data)
+   async register(data: RegisterData): Promise<AuthUser> {
+      const response = await httpClient.post<AuthUser>(`${this.baseUrl}/register`, data)
       return response.data.data
    }
 
@@ -67,23 +67,23 @@ class AuthApiService {
    }
 
    async changePassword(data: ChangePasswordData): Promise<{ message: string }> {
-      const response = await httpClient.post<{ message: string }>(`${this.baseUrl}/change-password`, data)
-      return response.data.data
+      const response = await httpClient.post<Record<string, never>>(`${this.baseUrl}/change-password`, data)
+      return { message: response.data.message }
    }
 
    async forgotPassword(data: ForgotPasswordData): Promise<{ message: string }> {
-      const response = await httpClient.post<{ message: string }>(`${this.baseUrl}/forgot-password`, data)
-      return response.data.data
+      const response = await httpClient.post<Record<string, never>>(`${this.baseUrl}/forgot-password`, data)
+      return { message: response.data.message }
    }
 
    async resetPassword(data: ResetPasswordData): Promise<{ message: string }> {
-      const response = await httpClient.post<{ message: string }>(`${this.baseUrl}/reset-password`, data)
-      return response.data.data
+      const response = await httpClient.post<Record<string, never>>(`${this.baseUrl}/reset-password`, data)
+      return { message: response.data.message }
    }
 
    async verifyEmail(token: string): Promise<{ message: string }> {
-      const response = await httpClient.post<{ message: string }>(`${this.baseUrl}/verify-email`, { token })
-      return response.data.data
+      const response = await httpClient.get<Record<string, never>>(`${this.baseUrl}/verify-email?token=${token}`)
+      return { message: response.data.message }
    }
 }
 
