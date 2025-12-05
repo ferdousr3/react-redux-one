@@ -1,5 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap");
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 @theme inline {
   /* Custom Colors */
@@ -36,7 +36,7 @@
   --radius-sm: calc(0.5rem - 4px);
 }
 
-/* CSS Variables for backwards compatibility */
+/* CSS Variables */
 :root {
   --background: 0 0% 100%;
   --foreground: 222.2 84% 4.9%;
@@ -60,13 +60,12 @@
   --radius: 0.5rem;
 }
 
-/* Enable smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 /* Hide Scrollbar */
@@ -78,7 +77,6 @@ body {
   scrollbar-width: none;
 }
 
-/* Selection styling */
 ::selection {
   background-color: rgb(209 250 229);
   color: rgb(6 78 59);
