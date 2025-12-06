@@ -18,6 +18,7 @@ import {
 const navigation = [
   { name: "Lawyers", href: "/lawyers" },
   { name: "Posts", href: "/posts" },
+  { name: "Cars", href: "/cars" },
 ]
 
 export function Header() {

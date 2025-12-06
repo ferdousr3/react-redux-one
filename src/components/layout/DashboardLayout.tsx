@@ -13,6 +13,7 @@ import {
    LogOut,
    Menu,
    X,
+   Car,
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -20,6 +21,7 @@ const sidebarItems = [
    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
    { name: 'Posts', href: '/dashboard/posts', icon: FileText },
    { name: 'Products', href: '/dashboard/products', icon: Package },
+   { name: 'Cars', href: '/dashboard/cars', icon: Car },
    { name: 'Lawyers', href: '/dashboard/lawyers', icon: Users },
    { name: 'Notes', href: '/dashboard/notes', icon: StickyNote },
    { name: 'Settings', href: '/dashboard/settings', icon: Settings },

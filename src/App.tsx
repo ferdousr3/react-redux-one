@@ -11,6 +11,8 @@ import { ContactPage } from "./pages/ContactPage"
 import { LawyerListPage } from "./pages/LawyerListPage"
 import { PostsPage } from "./pages/PostsPage"
 import { ProductsPage } from "./pages/ProductsPage"
+import { CarsPage } from "./pages/CarsPage"
+import { CarConfigurator } from "./pages/CarConfigurator"
 
 // Auth pages
 import { LoginPage } from "./pages/auth/LoginPage"
@@ -23,6 +25,7 @@ import { ProductsManagement } from "./pages/dashboard/ProductsManagement"
 import { LawyersManagement } from "./pages/dashboard/LawyersManagement"
 import { NotesManagement } from "./pages/dashboard/NotesManagement"
 import { SettingsPage } from "./pages/dashboard/SettingsPage"
+import { CarsManagement } from "./pages/dashboard/CarsManagement"
 
 function App() {
   return (
@@ -35,6 +38,8 @@ function App() {
           <Route path="/lawyers" element={<LawyerListPage />} />
           <Route path="/posts" element={<PostsPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/cars" element={<CarsPage />} />
+          <Route path="/cars/:id" element={<CarConfigurator />} />
         </Route>
 
         {/* Auth routes without Header and Footer */}
@@ -49,6 +54,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardHome />} />
             <Route path="/dashboard/posts" element={<PostsManagement />} />
             <Route path="/dashboard/products" element={<ProductsManagement />} />
+            <Route path="/dashboard/cars" element={<CarsManagement />} />
             <Route path="/dashboard/lawyers" element={<LawyersManagement />} />
             <Route path="/dashboard/notes" element={<NotesManagement />} />
             <Route path="/dashboard/settings" element={<SettingsPage />} />

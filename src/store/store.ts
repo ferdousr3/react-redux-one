@@ -4,6 +4,7 @@ import lawyerReducer from '@/lib/lawyers/store/lawyer.slice'
 import notesReducer from '@/lib/notes/store/notes.slice'
 import postReducer from '@/lib/posts/store/post.reducer'
 import productReducer from '@/lib/products/store/product.reducer'
+import carReducer from '@/store/slices/carSlice'
 
 export const store = configureStore({
    reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
       notes: notesReducer,
       posts: postReducer,
       products: productReducer,
+      car: carReducer,
    },
    middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
