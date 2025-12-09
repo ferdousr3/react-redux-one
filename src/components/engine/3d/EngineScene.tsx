@@ -1,168 +1,149 @@
 import { useRef, useState, Suspense } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { Stage, PresentationControls, Environment } from '@react-three/drei'
+import { Stage, PresentationControls, Environment, Html, useCursor, useTexture, useGLTF, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
 interface EngineSceneProps {
+    imageUrl?: string
+    modelUrl?: string
     onPartClick?: (part: string) => void
     highlightedPart?: string | null
 }
 
-function EngineModel({ onPartClick, highlightedPart }: { onPartClick?: (part: string) => void, highlightedPart?: string | null }) {
-    const meshRef = useRef<THREE.Group>(null)
-    const [hoveredPart, setHoveredPart] = useState<string | null>(null)
+// --- 1. GLTF 3D Model Viewer (User's Request) ---
+function GLTFModel({ modelUrl, onPartClick, highlightedPart }: { modelUrl: string, onPartClick?: (part: string) => void, highlightedPart?: string | null }) {
+    const { nodes } = useGLTF(modelUrl) as any
+    const [hovered, setHover] = useState<string | null>(null)
+    useCursor(!!hovered)
 
-    useFrame((state) => {
-        if (!meshRef.current) return
-        // subtle idle animation
-        meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.05
-    })
-
-    const handlePointerOver = (e: any, part: string) => {
+    const handleClick = (e: any, partName: string) => {
         e.stopPropagation()
-        document.body.style.cursor = 'pointer'
-        setHoveredPart(part)
-    }
-
-    const handlePointerOut = (e: any) => {
-        e.stopPropagation()
-        document.body.style.cursor = 'auto'
-        setHoveredPart(null)
-    }
-
-    const handleClick = (e: any, part: string) => {
-        e.stopPropagation()
-        if (onPartClick) onPartClick(part)
-    }
-
-    const getMaterial = (partName: string, baseColor: string) => {
-        const isHovered = hoveredPart === partName
-        const isSelected = highlightedPart === partName
-
-        const color = isSelected ? '#dd0031' : (isHovered ? new THREE.Color(baseColor).offsetHSL(0, 0, 0.2).getStyle() : baseColor)
-
-        return <meshStandardMaterial color={color} metalness={0.8} roughness={0.2} />
+        if (onPartClick) onPartClick(partName)
     }
 
     return (
-        <group ref={meshRef}>
-            {/* --- Engine Block --- */}
-            <mesh
-                position={[0, 0, 0]}
-                castShadow
-                receiveShadow
-                onClick={(e) => handleClick(e, 'Block')}
-                onPointerOver={(e) => handlePointerOver(e, 'Block')}
-                onPointerOut={handlePointerOut}
-            >
-                <boxGeometry args={[1.5, 1.2, 2.5]} />
-                {getMaterial('Block', '#555555')}
-            </mesh>
+        <group>
+            {Object.values(nodes).map((node: any) => {
+                if (!node.geometry) return null
 
-            {/* --- Cylinder Head (Top) --- */}
-            <mesh
-                position={[0, 0.85, 0]}
-                castShadow
-                receiveShadow
-                onClick={(e) => handleClick(e, 'Head')}
-                onPointerOver={(e) => handlePointerOver(e, 'Head')}
-                onPointerOut={handlePointerOut}
-            >
-                <boxGeometry args={[1.4, 0.5, 2.4]} />
-                {getMaterial('Head', '#777777')}
-            </mesh>
+                const isSelected = highlightedPart === node.name
+                const isHovered = hovered === node.name
 
-             {/* --- Intake Manifold (Right Side) --- */}
-             <group
-                onClick={(e) => handleClick(e, 'Intake')}
-                onPointerOver={(e) => handlePointerOver(e, 'Intake')}
-                onPointerOut={handlePointerOut}
-             >
-                 <mesh position={[1, 0.5, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[0.6, 0.4, 1.8]} />
-                    {getMaterial('Intake', '#aaaaaa')}
-                </mesh>
-                 <mesh position={[0.8, 0.5, -0.5]} rotation={[0, 0, -0.5]}>
-                    <cylinderGeometry args={[0.1, 0.1, 0.6]} />
-                    {getMaterial('Intake', '#aaaaaa')}
-                 </mesh>
-                 <mesh position={[0.8, 0.5, 0]} rotation={[0, 0, -0.5]}>
-                    <cylinderGeometry args={[0.1, 0.1, 0.6]} />
-                    {getMaterial('Intake', '#aaaaaa')}
-                 </mesh>
-                 <mesh position={[0.8, 0.5, 0.5]} rotation={[0, 0, -0.5]}>
-                    <cylinderGeometry args={[0.1, 0.1, 0.6]} />
-                    {getMaterial('Intake', '#aaaaaa')}
-                 </mesh>
-             </group>
-
-
-            {/* --- Exhaust Manifold (Left Side) --- */}
-            <group
-                onClick={(e) => handleClick(e, 'Exhaust')}
-                onPointerOver={(e) => handlePointerOver(e, 'Exhaust')}
-                onPointerOut={handlePointerOut}
-            >
-                 <mesh position={[-0.9, 0.2, 0]} castShadow receiveShadow>
-                     <boxGeometry args={[0.4, 0.3, 2.0]} />
-                     {getMaterial('Exhaust', '#8B4513')}
-                 </mesh>
-                 <mesh position={[-1.2, 0, 0.8]} rotation={[0, 0, -0.2]}>
-                    <cylinderGeometry args={[0.15, 0.15, 1.0]} />
-                    {getMaterial('Exhaust', '#666')}
-                 </mesh>
-            </group>
-
-            {/* --- Front Pulleys/Belts --- */}
-            <group
-                onClick={(e) => handleClick(e, 'Belts')}
-                onPointerOver={(e) => handlePointerOver(e, 'Belts')}
-                onPointerOut={handlePointerOut}
-            >
-                <mesh position={[0, -0.2, 1.3]} rotation={[1.57, 0, 0]} castShadow receiveShadow>
-                    <cylinderGeometry args={[0.3, 0.3, 0.1, 32]} />
-                    {getMaterial('Belts', '#111')}
-                </mesh>
-                 <mesh position={[0.4, 0.3, 1.3]} rotation={[1.57, 0, 0]} castShadow receiveShadow>
-                    <cylinderGeometry args={[0.2, 0.2, 0.1, 32]} />
-                    {getMaterial('Belts', '#111')}
-                </mesh>
-                 <mesh position={[-0.4, 0.3, 1.3]} rotation={[1.57, 0, 0]} castShadow receiveShadow>
-                    <cylinderGeometry args={[0.2, 0.2, 0.1, 32]} />
-                    {getMaterial('Belts', '#111')}
-                </mesh>
-            </group>
-
-            {/* --- Pistons (Visual representation if head was transparent, but lets put sparkly things on top) --- */}
-            {/* Spark Plugs / Coils */}
-            <group
-                onClick={(e) => handleClick(e, 'Ignition')}
-                onPointerOver={(e) => handlePointerOver(e, 'Ignition')}
-                onPointerOut={handlePointerOut}
-            >
-                {[-0.8, -0.3, 0.2, 0.7].map((z, i) => (
-                    <mesh key={i} position={[0, 1.15, z]} castShadow receiveShadow>
-                         <cylinderGeometry args={[0.08, 0.08, 0.2]} />
-                        {getMaterial('Ignition', '#dd0031')}
+                return (
+                    <mesh
+                        key={node.name}
+                        geometry={node.geometry}
+                        material={node.material}
+                        onClick={(e) => handleClick(e, node.name)}
+                        onPointerOver={(e) => { e.stopPropagation(); setHover(node.name) }}
+                        onPointerOut={(e) => { e.stopPropagation(); setHover(null) }}
+                    >
+                         {/* Highlight Effect */}
+                         {(isSelected || isHovered) && (
+                            <meshStandardMaterial
+                                color={isSelected ? "#dd0031" : "#ff9900"}
+                                roughness={0.3}
+                                emissive={isSelected ? "#dd0031" : "#000000"}
+                                emissiveIntensity={isSelected ? 0.5 : 0}
+                            />
+                         )}
                     </mesh>
-                ))}
-            </group>
-
+                )
+            })}
         </group>
     )
 }
 
-export function EngineScene({ onPartClick, highlightedPart }: EngineSceneProps) {
+// --- 2. Image-Based Fallback Viewer (Existing) ---
+function ImageModel({ imageUrl, onPartClick, highlightedPart }: { imageUrl: string, onPartClick?: (part: string) => void, highlightedPart?: string | null }) {
+    const meshRef = useRef<THREE.Group>(null)
+    const [hovered, setHover] = useState<string | null>(null)
+    useCursor(!!hovered)
+
+    useFrame((state) => {
+        if (!meshRef.current) return
+        meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.05
+    })
+
+    const texture = useTexture(imageUrl)
+    texture.colorSpace = THREE.SRGBColorSpace
+    // SVG Hotspot Component
+    const Hotspot = ({ part, x, y }: { part: string, x: number, y: number }) => {
+        const isSelected = highlightedPart === part
+        const isHovered = hovered === part
+
+        return (
+            <group position={[x, y, 0.1]}>
+                {/* Visual SVG Marker (HTML Overlay) */}
+                <Html center distanceFactor={10} style={{ pointerEvents: 'none' }}>
+                    <div className={`relative flex items-center justify-center transition-all duration-300 ${isSelected ? 'scale-125' : 'scale-100'}`}>
+                         {/* SVG Point - Simpler and Smaller */}
+                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`filter drop-shadow-md transition-all duration-300 ${isSelected ? 'text-[#dd0031]' : 'text-white'}`}>
+                            <circle cx="12" cy="12" r="5" fill="currentColor" stroke="white" strokeWidth="2" />
+                            {isSelected && <circle cx="12" cy="12" r="9" stroke="#dd0031" strokeWidth="2" className="opacity-50" />}
+                        </svg>
+                    </div>
+                </Html>
+
+                {/* Invisible Hitbox for easier clicking (slightly larger than the dot) */}
+                <mesh
+                    onClick={(e) => { e.stopPropagation(); if (onPartClick) onPartClick(part) }}
+                    onPointerOver={() => setHover(part)}
+                    onPointerOut={() => setHover(null)}
+                    visible={false}
+                >
+                    <circleGeometry args={[0.3, 16]} />
+                    <meshBasicMaterial color="red" />
+                </mesh>
+            </group>
+        )
+    }
+
     return (
-        <Canvas shadows dpr={[1, 2]} camera={{ position: [4, 3, 4], fov: 45 }}>
+        <group ref={meshRef}>
+            <mesh position={[0, 0, 0]}>
+                <planeGeometry args={[4, 3]} />
+                <meshBasicMaterial map={texture} transparent side={THREE.DoubleSide} alphaTest={0.5} />
+            </mesh>
+            <mesh position={[0, -1.51, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                 <planeGeometry args={[4, 3]} />
+                 <meshBasicMaterial map={texture} transparent opacity={0.15} side={THREE.DoubleSide} />
+            </mesh>
+
+            {/* SVG Hotspots - Reduced to 4 key points */}
+            <Hotspot part="Intake" x={0} y={0.8} />
+            <Hotspot part="Head" x={0} y={0.3} />
+            <Hotspot part="Block" x={0} y={-0.3} />
+            <Hotspot part="Exhaust" x={-1.2} y={0} />
+        </group>
+    )
+}
+
+export function EngineScene({ imageUrl, modelUrl, onPartClick, highlightedPart }: EngineSceneProps) {
+    return (
+        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 5], fov: 45 }}>
             <color attach="background" args={['#e4e4e7']} />
-            <Suspense fallback={null}>
-                <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.2, Math.PI / 4]}>
-                    <Stage environment="warehouse" intensity={0.5} shadows={{ type: 'contact', opacity: 0.5, blur: 2 }}>
-                       <EngineModel onPartClick={onPartClick} highlightedPart={highlightedPart} />
-                    </Stage>
-                </PresentationControls>
-                <Environment preset="warehouse" />
+            <Suspense fallback={<Html center><div className="text-xs font-bold text-gray-400 animate-pulse">LOADING ENGINE...</div></Html>}>
+                {modelUrl ? (
+                    <>
+                        <Stage environment="city" intensity={0.5}>
+                            <GLTFModel modelUrl={modelUrl} onPartClick={onPartClick} highlightedPart={highlightedPart} />
+                        </Stage>
+                        <OrbitControls makeDefault />
+                    </>
+                ) : imageUrl ? (
+                    <PresentationControls
+                        speed={1.5}
+                        global
+                        zoom={0.7}
+                        polar={[-0.1, Math.PI / 4]}
+                        azimuth={[-Math.PI / 4, Math.PI / 4]}
+                        snap={true}
+                    >
+                         <ImageModel imageUrl={imageUrl} onPartClick={onPartClick} highlightedPart={highlightedPart} />
+                    </PresentationControls>
+                ) : null}
+                <Environment preset="city" />
             </Suspense>
         </Canvas>
     )

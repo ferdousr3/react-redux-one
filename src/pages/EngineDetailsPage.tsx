@@ -93,7 +93,7 @@ export function EngineDetailsPage() {
                         <Link to="/engines" className="bg-white/90 p-2 rounded-full shadow-sm"><ArrowLeft className="w-5 h-5"/></Link>
                     </div>
 
-                    <EngineScene onPartClick={handlePartClick} highlightedPart={selectedPartId} />
+                    <EngineScene imageUrl={engine.imageUrl} onPartClick={handlePartClick} highlightedPart={selectedPartId} />
 
                     <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 pointer-events-none">
                          <RotateCw className="w-4 h-4 text-gray-600" />
