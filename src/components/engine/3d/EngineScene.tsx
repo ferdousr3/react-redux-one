@@ -3,9 +3,17 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { Stage, PresentationControls, Environment, Html, useCursor, useTexture, useGLTF, OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 
+interface PartConfig {
+    id?: string
+    name: string
+    x: number
+    y: number
+}
+
 interface EngineSceneProps {
     imageUrl?: string
     modelUrl?: string
+    parts?: PartConfig[] // New Prop for dynamic parts
     onPartClick?: (part: string) => void
     highlightedPart?: string | null
 }
@@ -55,7 +63,8 @@ function GLTFModel({ modelUrl, onPartClick, highlightedPart }: { modelUrl: strin
 }
 
 // --- 2. Image-Based Fallback Viewer (Existing) ---
-function ImageModel({ imageUrl, onPartClick, highlightedPart }: { imageUrl: string, onPartClick?: (part: string) => void, highlightedPart?: string | null }) {
+// Updated ImageModel to take parts
+function ImageModel({ imageUrl, parts = [], onPartClick, highlightedPart }: { imageUrl: string, parts?: PartConfig[], onPartClick?: (part: string) => void, highlightedPart?: string | null }) {
     const meshRef = useRef<THREE.Group>(null)
     const [hovered, setHover] = useState<string | null>(null)
     useCursor(!!hovered)
@@ -67,7 +76,8 @@ function ImageModel({ imageUrl, onPartClick, highlightedPart }: { imageUrl: stri
 
     const texture = useTexture(imageUrl)
     texture.colorSpace = THREE.SRGBColorSpace
-    // SVG Hotspot Component
+
+    // SVG Hotspot Component (unchanged)
     const Hotspot = ({ part, x, y }: { part: string, x: number, y: number }) => {
         const isSelected = highlightedPart === part
         const isHovered = hovered === part
@@ -99,6 +109,16 @@ function ImageModel({ imageUrl, onPartClick, highlightedPart }: { imageUrl: stri
         )
     }
 
+    // Default parts if none provided (Fallback)
+    const defaultParts = [
+        { name: "Intake", x: 0, y: 0.8 },
+        { name: "Head", x: 0, y: 0.3 },
+        { name: "Block", x: 0, y: -0.3 },
+        { name: "Exhaust", x: -1.2, y: 0 }
+    ]
+
+    const displayParts = parts.length > 0 ? parts : defaultParts
+
     return (
         <group ref={meshRef}>
             <mesh position={[0, 0, 0]}>
@@ -110,16 +130,15 @@ function ImageModel({ imageUrl, onPartClick, highlightedPart }: { imageUrl: stri
                  <meshBasicMaterial map={texture} transparent opacity={0.15} side={THREE.DoubleSide} />
             </mesh>
 
-            {/* SVG Hotspots - Reduced to 4 key points */}
-            <Hotspot part="Intake" x={0} y={0.8} />
-            <Hotspot part="Head" x={0} y={0.3} />
-            <Hotspot part="Block" x={0} y={-0.3} />
-            <Hotspot part="Exhaust" x={-1.2} y={0} />
+            {/* Render Dynamic Hotspots */}
+            {displayParts.map((p, i) => (
+                <Hotspot key={i} part={p.name} x={p.x} y={p.y} />
+            ))}
         </group>
     )
 }
 
-export function EngineScene({ imageUrl, modelUrl, onPartClick, highlightedPart }: EngineSceneProps) {
+export function EngineScene({ imageUrl, modelUrl, parts, onPartClick, highlightedPart }: EngineSceneProps) {
     return (
         <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 5], fov: 45 }}>
             <color attach="background" args={['#e4e4e7']} />
@@ -140,7 +159,7 @@ export function EngineScene({ imageUrl, modelUrl, onPartClick, highlightedPart }
                         azimuth={[-Math.PI / 4, Math.PI / 4]}
                         snap={true}
                     >
-                         <ImageModel imageUrl={imageUrl} onPartClick={onPartClick} highlightedPart={highlightedPart} />
+                         <ImageModel imageUrl={imageUrl} parts={parts} onPartClick={onPartClick} highlightedPart={highlightedPart} />
                     </PresentationControls>
                 ) : null}
                 <Environment preset="city" />

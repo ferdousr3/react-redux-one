@@ -6,6 +6,7 @@ import { PostsPage } from './PostsPage'
 import { ProductsPage } from './ProductsPage'
 import { EnginesPage } from './EnginesPage'
 import { EngineDetailsPage } from './EngineDetailsPage'
+import { EngineBuilderPage } from './EngineBuilderPage'
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -35,6 +36,10 @@ export const publicRoutes: RouteObject[] = [
   {
     path: '/engines/:id',
     element: <EngineDetailsPage />,
+  },
+  {
+    path: '/engine-builder',
+    element: <EngineBuilderPage />,
   },
 ]
 
