@@ -81,7 +81,7 @@ export const fetchCarById = createAsyncThunk('car/fetchCarById', async (id: stri
 
 export const createCar = createAsyncThunk(
    'car/createCar',
-   async (carData: Partial<Car>, { getState, rejectWithValue }) => {
+   async (carData: Partial<Car> & { parts?: Partial<CarPart>[] }, { getState, rejectWithValue }) => {
       try {
          const state = getState() as { auth: { token: string } }
          const response = await axios.post(`${API_URL}/v1/cars`, carData, {

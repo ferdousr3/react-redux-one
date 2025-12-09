@@ -12,7 +12,7 @@ import { LawyerListPage } from "./pages/LawyerListPage"
 import { PostsPage } from "./pages/PostsPage"
 import { ProductsPage } from "./pages/ProductsPage"
 import { CarsPage } from "./pages/CarsPage"
-import { CarConfigurator } from "./pages/CarConfigurator"
+import { CarDetailsPage } from "./pages/CarDetailsPage"
 
 // Auth pages
 import { LoginPage } from "./pages/auth/LoginPage"
@@ -39,7 +39,7 @@ function App() {
           <Route path="/posts" element={<PostsPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/cars" element={<CarsPage />} />
-          <Route path="/cars/:id" element={<CarConfigurator />} />
+          <Route path="/cars/:id" element={<CarDetailsPage />} />
         </Route>
 
         {/* Auth routes without Header and Footer */}
