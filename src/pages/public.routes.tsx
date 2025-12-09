@@ -4,6 +4,8 @@ import { ContactPage } from './ContactPage'
 import { LawyerListPage } from './LawyerListPage'
 import { PostsPage } from './PostsPage'
 import { ProductsPage } from './ProductsPage'
+import { EnginesPage } from './EnginesPage'
+import { EngineDetailsPage } from './EngineDetailsPage'
 
 export const publicRoutes: RouteObject[] = [
   {
@@ -25,6 +27,14 @@ export const publicRoutes: RouteObject[] = [
   {
     path: '/products',
     element: <ProductsPage />,
+  },
+  {
+    path: '/engines',
+    element: <EnginesPage />,
+  },
+  {
+    path: '/engines/:id',
+    element: <EngineDetailsPage />,
   },
 ]
 

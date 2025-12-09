@@ -29,9 +29,9 @@ const LIGHT_COLORS = [
 
 const UPGRADES = {
     engines: [
-        { id: 'v6', name: 'Standard V6', price: 0, image: 'https://images.unsplash.com/photo-1506352968315-779c78f13459?auto=format&fit=crop&w=200&q=80', specs: '300 HP' },
-        { id: 'v8', name: 'Turbo V8', price: 5000, image: 'https://images.unsplash.com/photo-1582239634289-e85d438d7c4a?auto=format&fit=crop&w=200&q=80', specs: '500 HP' },
-        { id: 'elec', name: 'Electric Dual-Motor', price: 12000, image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=200&q=80', specs: '800 HP' },
+        { id: 'v6', name: 'Standard V6', price: 0, image: 'https://images.unsplash.com/photo-1486262715619-38057a97d904?auto=format&fit=crop&w=300&q=80', specs: '300 HP' },
+        { id: 'v8', name: 'Turbo V8', price: 5000, image: 'https://images.unsplash.com/photo-1552857497-69502b4d1806?auto=format&fit=crop&w=300&q=80', specs: '500 HP' },
+        { id: 'elec', name: 'Electric Dual-Motor', price: 12000, image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=300&q=80', specs: '800 HP' },
     ],
     suspension: [
         { id: 'stock', name: 'Stock Comfort', price: 0 },
@@ -56,7 +56,7 @@ const MOCK_CARS = [
         id: '2',
         brand: 'Lamborghini',
         model: 'Huracan Evo',
-        year: 2023,
+        year: 2024,
         name: 'Huracan Evo',
         description: 'V10 power with advanced aerodynamics and emotive sound.',
         basePrice: 260000,
@@ -66,7 +66,7 @@ const MOCK_CARS = [
         id: '3',
         brand: 'Ferrari',
         model: 'F8 Tributo',
-        year: 2023,
+        year: 2024,
         name: 'F8 Tributo',
         description: 'Homage to the most powerful V8 in Ferrari history.',
         basePrice: 280000,

@@ -1,5 +1,5 @@
 
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: "CARS", href: "/cars" },
+  { name: "ENGINES", href: "/engines" },
   { name: "PARTS", href: "/products" },
 ]
 
@@ -26,6 +27,7 @@ export function Header() {
   const { user, isAuthenticated } = useSelector((state: RootState) => state.auth)
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleLogout = () => {
     dispatch(logout())
@@ -47,15 +49,21 @@ export function Header() {
 
             {/* Navigation Links - Now Right Aligned */}
             <div className="flex items-center gap-6 text-sm font-medium text-muted-foreground">
-                {navigation.map((item) => (
+                {navigation.map((item) => {
+                  const isActive = location.pathname.startsWith(item.href)
+                  return (
                     <Link
-                    key={item.name}
-                    to={item.href}
-                    className="hover:text-primary transition-colors font-mono"
+                      key={item.name}
+                      to={item.href}
+                      className={cn(
+                        "transition-colors font-mono hover:text-primary",
+                        isActive ? "text-primary font-bold" : "text-muted-foreground"
+                      )}
                     >
-                    {item.name}
+                      {item.name}
                     </Link>
-                ))}
+                  )
+                })}
             </div>
 
             <div className="w-px h-6 bg-border" />

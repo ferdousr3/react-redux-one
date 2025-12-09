@@ -103,9 +103,9 @@ export function LandingPage() {
                     Source the world's finest crate engines, transmissions, and performance components. Dyno-tested and ready to ship.
                 </p>
                 <div className="hero-text flex flex-col sm:flex-row gap-4">
-                    <button className="px-8 py-4 bg-gray-900 text-white font-bold rounded-lg hover:bg-black transition-all shadow-xl shadow-gray-900/20 flex items-center justify-center gap-2 group">
-                        Browse Inventory <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </button>
+                <Link to="/engines" className="px-8 py-4 bg-gray-900 text-white font-bold rounded-lg hover:bg-black transition-all shadow-xl shadow-gray-900/20 flex items-center justify-center gap-2 group">
+                    Browse Inventory <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
                     <button className="px-8 py-4 bg-white border border-gray-200 text-gray-700 font-bold rounded-lg hover:bg-gray-50 transition-all flex items-center justify-center gap-2 shadow-sm">
                         Fitment Guide
                     </button>
@@ -149,7 +149,7 @@ export function LandingPage() {
                     <h2 className="text-4xl font-bold text-gray-900 mb-4">Latest Arrivals</h2>
                     <p className="text-gray-600 max-w-lg">Hand-picked engines from our latest acquisition. Verified compression and leak-down tested.</p>
                 </div>
-                <Link to="/products" className="text-gray-900 font-bold hover:text-black flex items-center gap-2">View All <ArrowRight className="w-4 h-4"/></Link>
+                <Link to="/engines" className="text-gray-900 font-bold hover:text-black flex items-center gap-2">View All <ArrowRight className="w-4 h-4"/></Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -234,9 +234,9 @@ export function LandingPage() {
             <h2 className="text-5xl font-bold text-white mb-6">Ready to swap?</h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-10">Start your build today. Our team of experts is standing by to help you choose the perfect powertrain for your project.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button className="px-10 py-4 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-all shadow-lg">
-                    Find My Engine
-                </button>
+            <Link to="/engines" className="px-10 py-4 bg-white text-gray-900 font-bold rounded-full hover:bg-gray-100 transition-all shadow-lg">
+                Find My Engine
+            </Link>
                 <button className="px-10 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold rounded-full hover:bg-white hover:text-gray-900 transition-all">
                     Contact Sales
                 </button>
